@@ -111,6 +111,67 @@ Notable powers relevant to softcode:
 
 ---
 
+## HTTP API port
+
+RhostMUSH exposes an HTTP endpoint on a configurable port for executing
+mushcode and reading values from external programs — no telnet session needed.
+
+```
+api_port <port>     # set in rhostmush.conf; must differ from telnet port
+```
+
+Authentication: HTTP Basic Auth — `user = "#<dbref>"`, `password = api password`.
+
+### Enabling an object for API access
+
+```
+@api/enable #<dbref>               -- grants API power
+@api/password #<dbref>=<password>  -- sets auth password
+@api/ip #<dbref>=<ip.mask.*>       -- restrict to IP(s); defaults to localhost
+@api/status #<dbref>               -- verify readiness
+```
+
+Required `@power`:  `API` (set automatically by `@api/enable`).
+Requires `power_objects` config enabled for non-player objects.
+
+### Request types
+
+| Method | Header | Purpose |
+|--------|--------|---------|
+| POST | `Exec: "cmd"` or `Exec64: <base64>` | Execute command(s); semicolon-separates multiples |
+| GET  | `Exec: "[expr]"` or `Exec64: <base64>` | Evaluate expression; result in `Return:` header |
+
+Always prefer `Exec64:` — base64-encodes the payload so special characters
+(quotes, semicolons, `$`, backticks) never need escaping in headers.
+
+For GET, add `Encode: yes` to receive the `Return:` value base64-encoded
+(safe for multi-line or special-character output).
+
+### Response headers
+
+```
+HTTP/1.1 200 OK
+Exec: Ok - Executed          (POST / GET)
+Return: <value-or-base64>    (GET only)
+```
+
+Error codes: `400` bad headers, `403` permission denied / bad password / IP blocked,
+`404` invalid target dbref.
+
+### curl examples
+
+```bash
+# POST — execute a command as #12 with password 'ya'
+curl -X POST --user "#12:ya" -H 'Exec64: <base64>' --head http://localhost:2222
+
+# GET — evaluate an expression, base64-encode the return value
+curl -X GET --user "#12:ya" -H 'Exec64: <base64>' -H 'Encode: yes' --head http://localhost:2222
+```
+
+See in-game: `wizhelp api`, `wizhelp api setup`, `wizhelp api processing`, `wizhelp api headers`
+
+---
+
 ## hasflag() / haspower()
 
 Both work as expected on RhostMUSH despite not appearing in wizhelp:
