@@ -2,20 +2,29 @@
 id: rhost-mail-api-001
 domain: functions
 server: RhostMUSH
-source: RhostMUSH/trunk Mushcode/mailwrappers
+source: RhostMUSH/trunk Mushcode/mailwrappers, Server/game/txt/help.txt
 complexity: medium
-tags: [mail, functions, native-api, sudo, fo]
+tags: [mail, functions, native-api, sudo, fo, mailsend, mailquick, mailstatus, mailread]
 date_added: "2026-03-27"
 tested: true
 ---
 
 # RhostMUSH Native Mail API
 
-RhostMUSH has a built-in mail system. It is **not** accessed via a `mailsend()` function call — it is accessed through `mail/` subcommands, either `@fo`'d as the player or via `@sudo`. There are also several query functions.
+RhostMUSH has a rich built-in mail system accessible two ways:
 
-## Key principle
+1. **`mail/` subcommands** via `@fo`/`@sudo` — works for anyone
+2. **Side-effect functions** (`mailsend()`, `mailread()`, etc.) — **wizard-only**; object must have SIDEFX + INHERIT flags
 
-> Never call `mailsend()` directly in softcode. It doesn't exist as a standalone function in RhostMUSH. Use `@fo %#={mail/send ...}` or `@sudo %#={mail/send ...}` instead.
+## Choosing an approach
+
+| Approach | Requires | Best for |
+|----------|----------|---------|
+| `@fo target={mail/send ...}` | player permission | Sending as a specific player |
+| `@sudo target={mail/send ...}` | wizard power on object | Sending as another player from a wiz object |
+| `mailsend(to, subject, body)` | SIDEFX + INHERIT on object | Sending from a system object without a player context |
+
+For **system objects** (job trackers, chargen, etc.) that send notifications on behalf of the game — `mailsend()` is the cleanest approach, provided the object is wizard-owned with `INHERIT SIDEFX`.
 
 ## Sending mail
 
@@ -38,6 +47,33 @@ RhostMUSH has a built-in mail system. It is **not** accessed via a `mailsend()` 
 @@ Forward a message
 @sudo %#={mail/forward <msgnum> @<recipient>=<note>}
 ```
+
+## mailsend() — wizard side-effect function
+
+Confirmed present in RhostMUSH (wizhelp only — not in player help.txt). Allows a wizard-owned SIDEFX object to send mail without needing a player context.
+
+**Requirements:** Object must have `INHERIT` and `SIDEFX` flags set.
+
+```mushcode
+@@ Basic send
+[mailsend(recipient, subject, body)]
+
+@@ With optional sender override (wizard only)
+[mailsend(recipient, subject, body, sender)]
+```
+
+Arguments:
+- `recipient` — player name, dbref, or space-separated list
+- `subject` — mail subject line
+- `body` — mail body text
+- `sender` — optional; override the apparent sender (wizard privilege required)
+
+Example from RockJobs:
+```mushcode
+[mailsend([get(%0/requester)], Del: [name(%0)], [cname(%#)] has deleted your request.%r%r[get(%0/describe)])]
+```
+
+> `mailsend()` is a **side-effect function** — it sends mail as a byproduct of evaluation, not via a command. The object calling it must have `SIDEFX` to use side-effect functions.
 
 ## Reading mail
 
@@ -86,33 +122,73 @@ RhostMUSH has a built-in mail system. It is **not** accessed via a `mailsend()` 
 
 ## Query functions
 
-These ARE softcode-callable functions (no `@fo` needed):
+Softcode-callable (no `@fo` needed). Documented access levels noted.
 
-| Function | Returns |
-|----------|---------|
-| `mailquick(<player>)` | Space-separated list of message numbers in inbox |
-| `mailquick(<player>,new)` | Unread message numbers |
-| `mailstatus(<player>)` | List of message numbers (alias of mailquick) |
-| `mailstatus(<player>,<num>)` | Status flags for a specific message |
-| `mailread(<player>,<num>,g)` | Message number (global) |
-| `mailread(<player>,<num>,f)` | From field |
-| `mailread(<player>,<num>,d)` | Date |
-| `mailread(<player>,<num>,k)` | Size in bytes |
-| `mailread(<player>,<num>,s)` | Subject |
-| `mailread(<player>,<num>,b)` | Body |
-| `mailread(<player>,<num>,s,1)` | Mark message as read (side effect) |
-| `mailsize(<player>,2)` | Mailbox size in bytes |
+### mailquick() — fully documented, available to all
 
-### Example: check if player has new mail
-
-```mushcode
-&FN_HAS_MAIL Obj=[gt(words(mailquick(%0,new)),0)]
+```
+mailquick(<player>[, <folder>][, <type>])
 ```
 
-### Example: list unread count
+| `type` | Returns |
+|--------|---------|
+| `0` (default) | `<total> <new> <unread> <old> <marked> <saved>` |
+| `1` | `<unread+old> <new> <marked>` (MUX `mail()` compat) |
+| `2` | Single integer — total message count |
+| `3` | Modified version of type 1 |
 
 ```mushcode
-&FN_UNREAD_COUNT Obj=[words(mailquick(%0,new))]
+[mailquick(me)]         @@ "4 1 0 2 1 0"  (total new unread old marked saved)
+[mailquick(me,,1)]      @@ "3 1 1"  (MUX compat)
+[mailquick(me,,2)]      @@ "4"  (total count only)
+
+@@ Check if player has new mail
+[gt(extract(mailquick(%0),2,1), 0)]
+
+@@ Total unread count
+[extract(mailquick(%0), 3, 1)]
+```
+
+### mailstatus() — wizard-only
+
+Mimics `mail/status` output — returns list of status strings for messages.
+
+```mushcode
+[mailstatus(%#)]               @@ all messages
+[mailstatus(%#, trim(v(0)))]   @@ filtered (e.g. "U" for unread)
+[mailstatus(%#, /%0)]          @@ subject search
+```
+
+### mailread() — wizard-only
+
+Reads individual fields from a mail message. Object must have SIDEFX for the read-marking variant.
+
+```mushcode
+[mailread(%0, N, g)]    @@ global message number
+[mailread(%0, N, f)]    @@ from field
+[mailread(%0, N, d)]    @@ date
+[mailread(%0, N, k)]    @@ size in bytes
+[mailread(%0, N, s)]    @@ subject
+[mailread(%0, N, b)]    @@ body
+[mailread(%0, N, s, 1)] @@ mark as read (side effect — requires SIDEFX)
+```
+
+### mailsize() — confirmed present (used in brandymail.wrap)
+
+```mushcode
+[mailsize(%#, 2)]    @@ mailbox size in bytes
+```
+
+### mailalias() — resolve mail alias to dbrefs
+
+```mushcode
+[mailalias(aliasname)]    @@ returns space-separated dbrefs
+```
+
+### msizetot() — total mail system size
+
+```mushcode
+[msizetot()]    @@ total bytes used by entire mail system (wizard)
 ```
 
 ## Player mail toggles

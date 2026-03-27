@@ -209,27 +209,37 @@ Common flag names: `wizard`, `royalty`, `immortal`, `inherit`, `safe`
 
 Source: `RhostMUSH/trunk/Mushcode/mailwrappers/`
 
-**`mailsend()` is NOT a valid RhostMUSH softcode function.** Mail is sent via `mail/` subcommands through `@fo` or `@sudo`. See `patterns/functions/rhost-mail-api.md` for the complete reference.
+RhostMUSH mail can be accessed two ways. See `patterns/functions/rhost-mail-api.md` for the complete reference.
+
+### Via subcommands (all access levels)
 
 ```mushcode
-@fo %#={mail/send <recipient>=<subject>//<body>}    @@ send as the player
+@fo %#={mail/send <recipient>=<subject>//<body>}          @@ send as the player
 @sudo <player>={mail/send <recipient>=<subject>//<body>}  @@ send as another player
 ```
 
 Subject/body separator in `mail/send` is `//` (double-slash).
 
-### Mail query functions (softcode-callable)
+### Via side-effect functions (wizard-only; object needs INHERIT + SIDEFX)
 
+```mushcode
+[mailsend(recipient, subject, body)]          @@ send from system object
+[mailsend(recipient, subject, body, sender)]  @@ with sender override
 ```
-mailquick(<player>)           → space-sep list of message numbers in inbox
-mailquick(<player>, new)      → unread message numbers only
-mailstatus(<player>)          → alias of mailquick
-mailread(<player>,<n>,b)      → body of message n
-mailread(<player>,<n>,f)      → from field
-mailread(<player>,<n>,s)      → subject
-mailread(<player>,<n>,k)      → size in bytes
-mailsize(<player>,2)          → total mailbox size in bytes
-```
+
+`mailsend()` is confirmed present in RhostMUSH (wizhelp only — not in player help.txt). Used in SIDEFX system objects like job trackers. The original RockJobs code uses `mailsend()` correctly for this purpose.
+
+### Mail query functions
+
+| Function | Access | Returns |
+|----------|--------|---------|
+| `mailquick(player[,folder][,type])` | All | `type=0`: `total new unread old marked saved`; `type=1`: MUX compat; `type=2`: total count |
+| `mailstatus(player[,filter])` | Wizard | List of status strings |
+| `mailread(player, N, field)` | Wizard | Fields: `g`=num, `f`=from, `d`=date, `k`=size, `s`=subject, `b`=body |
+| `mailread(player, N, s, 1)` | Wizard+SIDEFX | Mark message as read |
+| `mailsize(player, 2)` | All | Mailbox size in bytes |
+| `mailalias(name)` | All | Dbrefs for a mail alias |
+| `msizetot()` | Wizard | Total mail system bytes |
 
 ---
 
@@ -274,6 +284,44 @@ bittype(<player>) → integer
 [gte(bittype(%#), 5)]   @@ true for Wizard+
 @break [lt(bittype(%#), 5)]=@pemit %#=Permission denied.
 ```
+
+---
+
+## TinyMUX → RhostMUSH migration notes
+
+Confirmed via wizhelp.txt + help.txt from RhostMUSH trunk. These functions exist in **both** TinyMUX and RhostMUSH with identical or compatible semantics — no changes needed when migrating:
+
+| Function | Rhost status | Notes |
+|----------|-------------|-------|
+| `strcat(a,b,c,...)` | **Native** | Concatenates all args with no separator. `strcat(v1,:,v2,:,v3)` → `v1:v2:v3`. Same behavior as TinyMUX. |
+| `regraball(str,regexp)` | **Native** | Returns all words in `str` matching `regexp`. Identical to TinyMUX. Case-insensitive variant: `regraballi()`. |
+| `cor(a,b,c)` | **Native** | Lazy/short-circuit OR — stops at first truthy value. Identical to TinyMUX. Complement: `cand()`. |
+| `localize(str)` | **Native** | Preserves setq registers across UDF calls. Rhost extends with optional register-list and key args. |
+| `lnum(from,to,sep,step)` | **Native** | Range-aware. `lnum(1,11,\|)` → `1\|2\|...\|11`. Stepping supported. |
+| `lrand(lo,hi,count,sep)` | **Native** | Same as TinyMUX. |
+| `setr()` / `setq()` | **Native** | Same as TinyMUX. |
+
+### Key incompatibility: `@function` switch name
+
+TinyMUX uses `/privileged`; RhostMUSH uses `/privilege` (abbreviated `/priv`):
+
+```mushcode
+@@ TinyMUX:
+@function/preserve/privileged funcname=obj/ATTR
+
+@@ RhostMUSH:
+@function/preserve/privilege funcname=obj/ATTR
+@@ or abbreviated:
+@function/pres/priv funcname=obj/ATTR
+```
+
+GMCCG's `@startup` on the SFP object uses this pattern — change `/privileged` → `/privilege` in all `@startup` and `@dolist` UDF registration code.
+
+### Functions NOT in RhostMUSH (TinyMUX-only)
+
+| TinyMUX feature | RhostMUSH alternative |
+|----------------|----------------------|
+| `@rxlevel` / `@txlevel` (reality layers) | No equivalent — requires full subsystem redesign |
 
 ---
 
