@@ -64,6 +64,26 @@ A self-contained in-game help system. Topics stored as attributes on a `HelpSyst
 
 Both require `@power <dbref>=@a execscript` (ARCHITECT level to pass args).
 
+## Display formatting with printf()
+
+All display UDFs use `printf()` (ANSI-aware) rather than `center()`/`repeat()`:
+
+```mushcode
+# 78-char centered = header — bold
+&FN_HEADER <obj>= %ch[printf($^78:=:s,%[%b%0%b[chr(93)])]%cn
+
+# 78-char full-width = rule + optional hint lines below
+&FN_FOOTER <obj>= [printf($78:=:s,)][if(%0,%r%0,)]
+
+# 78-char centered - divider for category groupings
+&FN_CAT_HEADER <obj>= [printf($^78:-:s,%b%0%b)]
+```
+
+Key escapes:
+- `%[` = literal `[` in arg (no eval context opened)
+- `chr(93)` = literal `]` — `%]` is unreliable in nested bracket contexts
+- See `patterns/server-help/rhost.md` → `printf()` section for full reference
+
 ## Notes
 
 - Add a `@rhost/testkit` test snippet here before marking `tested: true`

@@ -111,6 +111,87 @@ Notable powers relevant to softcode:
 
 ---
 
+## printf() — ANSI-aware string formatting
+
+`printf()` is RhostMUSH's canonical string formatting function. Unlike `center()`, `ljust()`, `rjust()`, and `repeat()`, it measures string width **after** stripping ANSI codes — so output is correct even when arguments contain color.
+
+```
+printf(<format>, <arg0>[, <arg1>, ...])
+```
+
+### Format string syntax
+
+```
+$[<codes>][<width>][:<filler>:]s
+```
+
+| Code | Effect |
+|------|--------|
+| `^`  | Center the argument within `<width>` |
+| `-`  | Left-justify (default) |
+| `_`  | Stretch: pad argument to fill `<width>` |
+| `&`  | CR-wrap at `<width>` |
+| `\|` | Auto-wrap at `<width>` |
+| `"`  | Word-wrap at `<width>` |
+
+- `<width>` — column width in characters
+- `:<filler>:` — single fill character (default space). Use `%<058>` for a literal `:` as filler (`:` is the format delimiter).
+- `s` — marks the end of the format token; remaining text is output as-is.
+
+### Common display patterns
+
+#### 78-char centered header with `=` fill
+
+```mushcode
+# Output: ================[ Help ]================  (78 chars wide)
+&FN_HEADER <obj>= %ch[printf($^78:=:s,%[%b%0%b[chr(93)])]%cn
+```
+
+- `%[` = literal `[` (escape — no function call opened)
+- `chr(93)` = literal `]` — avoids `%]` which is unreliable in nested bracket contexts
+- `%ch` / `%cn` = bold on/off for visual weight
+
+#### 78-char full-width rule (`=` fill, no argument)
+
+```mushcode
+# Output: ============================================ (78 `=` chars)
+&FN_FOOTER <obj>= [printf($78:=:s,)][if(%0,%r%0,)]
+```
+
+Passing an empty string `,` makes printf produce only the fill characters.
+
+#### 78-char centered category divider with `-` fill
+
+```mushcode
+# Output: ----------------  Combat  ---------------- (78 chars wide)
+&FN_CAT_HEADER <obj>= [printf($^78:-:s,%b%0%b)]
+```
+
+The leading/trailing `%b` (space) adds a one-space margin between the filler and the label.
+
+### Escaping `:` in format strings
+
+`:` is the filler delimiter. To use a literal `:` as the filler character:
+
+```mushcode
+printf($^78%<058>:%<058>s, text)   # center in 78 chars, filler = :
+```
+
+`%<058>` = chr(58) = `:`. The sequence `%<NNN>` produces the character with decimal ASCII code NNN.
+
+### Why prefer printf over center()/repeat()
+
+| Function | ANSI-aware? | Notes |
+|----------|-------------|-------|
+| `printf()` | Yes | Correct width even with color codes in args |
+| `center()` | No | Miscounts width when arg contains ANSI codes |
+| `repeat()` | N/A | No width-aware centering |
+| `ljust()`/`rjust()` | No | Same miscounting issue as center() |
+
+Always use `printf()` when the argument may contain ANSI color or bold codes.
+
+---
+
 ## hasflag() / haspower()
 
 Both work as expected on RhostMUSH despite not appearing in wizhelp:
