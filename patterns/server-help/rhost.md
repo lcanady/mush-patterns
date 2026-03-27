@@ -202,3 +202,278 @@ haspower(<object>, <power>)     → 1 if object has the named power
 ```
 
 Common flag names: `wizard`, `royalty`, `immortal`, `inherit`, `safe`
+
+---
+
+## Mail API
+
+Source: `RhostMUSH/trunk/Mushcode/mailwrappers/`
+
+**`mailsend()` is NOT a valid RhostMUSH softcode function.** Mail is sent via `mail/` subcommands through `@fo` or `@sudo`. See `patterns/functions/rhost-mail-api.md` for the complete reference.
+
+```mushcode
+@fo %#={mail/send <recipient>=<subject>//<body>}    @@ send as the player
+@sudo <player>={mail/send <recipient>=<subject>//<body>}  @@ send as another player
+```
+
+Subject/body separator in `mail/send` is `//` (double-slash).
+
+### Mail query functions (softcode-callable)
+
+```
+mailquick(<player>)           → space-sep list of message numbers in inbox
+mailquick(<player>, new)      → unread message numbers only
+mailstatus(<player>)          → alias of mailquick
+mailread(<player>,<n>,b)      → body of message n
+mailread(<player>,<n>,f)      → from field
+mailread(<player>,<n>,s)      → subject
+mailread(<player>,<n>,k)      → size in bytes
+mailsize(<player>,2)          → total mailbox size in bytes
+```
+
+---
+
+## @toggle / hastoggle()
+
+Source: `RhostMUSH/trunk/Mushcode/mailwrappers/`
+
+RhostMUSH distinguishes player **toggles** (configurable preferences) from **flags** (object properties).
+
+```mushcode
+@toggle %#=brandy_mail          @@ set
+@toggle %#=!brandy_mail         @@ unset
+[hastoggle(%#, brandy_mail)]    @@ check → 1 or 0
+```
+
+Common toggles: `brandy_mail`, `penn_mail`, `mail_stripreturn`, `muxpage`, `monitor`, `monitor_site`, `prog`
+
+**`@toggle` is NOT the same as `@set`** and not PennMUSH-specific: it's the correct RhostMUSH mechanism for player-configurable behaviors.
+
+---
+
+## bittype() — numeric bitlevel
+
+Source: `RhostMUSH/trunk/Mushcode/scan, AccountSubsystem`
+
+```
+bittype(<player>) → integer
+```
+
+| Value | Level |
+|-------|-------|
+| 1 | Mortal |
+| 2 | GuildMaster |
+| 3 | Architect |
+| 4 | Councilor |
+| 5 | Wizard |
+| 6 | Royalty |
+| 7 | Immortal |
+| 8 | God |
+
+```mushcode
+[gte(bittype(%#), 5)]   @@ true for Wizard+
+@break [lt(bittype(%#), 5)]=@pemit %#=Permission denied.
+```
+
+---
+
+## Functions confirmed present in RhostMUSH
+
+Source: `RhostMUSH/trunk/Mushcode/softfunctions.minmax` (implements PennMUSH shims for missing functions — the ones NOT shimmed are confirmed native)
+
+| Function | Notes |
+|----------|-------|
+| `elist()` | **Native** — PennMUSH calls it `itemize()`. Both names work in RhostMUSH. |
+| `cname()` | **Native** — returns colored display name of player |
+| `title()` | **Native** — returns player `@title` |
+| `ifelse()` | **Native** (shimmed only as fallback for very old versions) |
+| `setr()` | **Native** |
+| `timefmt()` | **Native** |
+| `randextract()` | **Native** |
+| `columns()` | **Native** |
+| `ofparse()` | **Native** |
+| `spellnum()` | **Native** |
+| `mask()` | **Native** |
+| `size()` | **Native** |
+| `creplace()` | **Native** |
+| `sortlist()` | **Native** |
+| `pack()` / `unpack()` | **Native** |
+| `nsiter()` | **Native** — like `iter()` but no separator injected between items |
+| `itext()` / `inum()` | **Native** — current item/index inside `iter()` or `list()` |
+| `ibreak()` | **Native** — break out of `iter()` early |
+| `lattrp()` | **Native** — `lattr()` including parent chain |
+| `lcmds()` | **Native** — list `$`-command attributes |
+| `lzone()` | **Native** — list zones on an object |
+| `objeval()` | **Native** — evaluate expression in another object's security context |
+| `lookup_site()` | **Native** — get connecting hostname/IP for a connected player |
+| `wildmatch()` | **Native** — wildcard match against a list of patterns |
+| `strfunc()` | **Native** — build a function call string dynamically |
+| `pushregs()` / `nameq()` | **Native** — register stack operations |
+| `pedit()` | **Native** — multi-pair edit |
+| `squish()` | **Native** — collapse multiple spaces |
+| `graball()` | **Native** — filter list by wildcard |
+| `convtime()` | **Native** — convert date/time string to seconds |
+| `regeditall()` / `regeditalli()` | **Native** — regex global substitution |
+
+---
+
+## Functions NOT in RhostMUSH (PennMUSH only)
+
+These appear in PennMUSH softcode but **do not exist** natively in RhostMUSH. `softfunctions.minmax` provides soft replacements.
+
+| PennMUSH function | RhostMUSH equivalent |
+|-------------------|---------------------|
+| `itemize()` | `elist()` |
+| `timestring()` | `timefmt($!cd $!2Xh $!2Fm $2Gs, secs)` |
+| `poll()` | `doing()` |
+| `band()` / `bor()` | `mask(%0,%1,&)` / `mask(%0,%1,|)` |
+| `objmem()` | `size(%0,3)` |
+| `strinsert()` | `creplace(%0,add(%1,1),%2,i)` |
+| `lpos()` | `setdiff(totpos(%1,%0),#-1)` |
+| `pickrand()` | `randextract(%0,1,%1)` |
+| `vmax()` / `vmin()` | `sortlist(+n,%2,%0,%1)` / `sortlist(-n,%2,%0,%1)` |
+| `cpad()` / `rpad()` / `lpad()` | `printf($^%1:%2:+s,%0)` etc. |
+| `exptime()` | `timefmt($!Zy $!EM $!Cd $!Xh $!Fm $Gs,%0)` |
+| `writetime()` | `timefmt($!Z years $!e months $!C days ...)` |
+| `firstof()` / `allof()` | `ofparse(1,...)` / `ofparse(2,...)` |
+| `align()` | Available via softfunctions shim |
+
+---
+
+## @function — registering global softcode functions
+
+Source: `RhostMUSH/trunk/Mushcode/softfunctions.minmax`
+
+```mushcode
+@function funcname=<dbref>/ATTR_NAME          @@ normal
+@function/pres funcname=<dbref>/ATTR_NAME     @@ preserved registers
+@function/priv funcname=<dbref>/ATTR_NAME     @@ privileged (wizard callers only)
+@function/priv/pres funcname=<dbref>/ATTR_NAME
+@function/priv/notrace funcname=<dbref>/ATTR_NAME
+@function/min funcname=<N>                    @@ minimum argument count
+@function/max funcname=<N>                    @@ maximum argument count
+@admin function_access=funcname <flag>        @@ access flag (e.g. no_eval)
+```
+
+---
+
+## @lfunction — local softcode functions
+
+```mushcode
+@startup Obj=@lfunction funcname=me/attr_name
+@startup Obj=@lfunction/priv funcname=me/attr_name
+```
+
+Game-local functions, not global. Must be re-registered in `@startup`.
+
+---
+
+## @progprompt / @program — interactive input
+
+Source: `RhostMUSH/trunk/Mushcode/mailwrappers/StartObject`
+
+```mushcode
+@progprompt me=<prompt text>:     @@ set prompt string shown to player
+@program %#=<dbref>/<attr>        @@ next typed line goes to this attr as %0
+```
+
+One-shot handler — to chain, install another `@program` at the end of the handler. The `prog` toggle must be set on the object: `@toggle obj=prog`.
+
+---
+
+## @sudo — force command as another player
+
+```mushcode
+@sudo <player>={command args}
+```
+
+Executes `command` as if `<player>` typed it. Requires wizard power on the executing object. Different from `@fo` (force) in that `@sudo` preserves caller's security context for nested operations.
+
+---
+
+## Totem system
+
+Source: `RhostMUSH/trunk/Mushcode/daily`
+
+Totems are custom bitmask tags, defined in `netrhost.conf`:
+
+```
+totem_add daily 7 0x80000000
+totem_letter daily 0 d
+```
+
+```mushcode
+@tag/add daily=My Object       @@ tag an object with the 'daily' totem
+search(totem=d)                 @@ find all objects tagged with 'd' totem
+```
+
+---
+
+## @Aconnect / @Adisconnect
+
+Source: `RhostMUSH/trunk/Mushcode/MedusaObject`
+
+Fire on any player connecting/disconnecting game-wide. Object must be in Master Room or INHERIT.
+
+```mushcode
+@Aconnect Obj=<code>      @@ %# = connecting player
+@Adisconnect Obj=<code>   @@ %# = disconnecting player
+```
+
+---
+
+## SLAVE and FUBAR flags
+
+```mushcode
+@set %#=slave fubar     @@ player cannot execute any commands
+@set %#=!slave !fubar   @@ restore normal operation
+```
+
+---
+
+## @dynhelp — indexed help files
+
+```mushcode
+$help:@dynhelp helpfilename=%#
+$help *:@dynhelp helpfilename/%0=%#
+@set Obj/CMD_HELP_ARG=no_parse   @@ prevent arg evaluation before lookup
+```
+
+The help file must be indexed first with `mkindx <filename>` on the server.
+
+---
+
+## @wait/until
+
+```mushcode
+@wait/until <secs-epoch>={code}
+```
+
+Fires at a specific Unix timestamp. Used with `convtime()` to schedule at a clock time:
+
+```mushcode
+@wait/until [convtime([extract(time(),1,3)] 23:59:59 [extract(time(),5,1)])]={...}
+```
+
+`extract(time(),1,3)` = date portion; `extract(time(),5,1)` = timezone.
+
+---
+
+## Account system functions
+
+Source: `RhostMUSH/trunk/Mushcode/AccountSubsystem`
+
+RhostMUSH has a built-in multi-character account system:
+
+```mushcode
+account_owner(<port>)                   @@ dbref of master account for port
+account_owner(<port>,logoff)            @@ log off account for port
+account_owner(<player>,_ACCT,<port>,<pw>)  @@ authenticate and log in
+account_login(<player>,_ACCT,<port>)    @@ login to account
+account_su(<player>,<port>,_ACCT)       @@ switch to sub-character
+```
+
+Requires `file_object` set in `netrhost.conf`:
+```
+file_object <dbref>   @@ the File Object handles connection commands
+```
