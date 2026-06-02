@@ -13,6 +13,13 @@ tested: true
 
 Always validate required arguments at the top of a UDF and return `#-1 <reason>` on bad input. Callers can detect errors with `isnum(before(result,<space>))` or `@rhost/testkit`'s `.toBeError()`.
 
+## Signal
+USE:  validate required args at top of every UDF | return #-1 REASON on bad input
+DETECT: isnum(before(result,%b)) | .toBeError()
+CODES: #-1=invalid | #-2=permission-denied | #-3=wrong-arg-count
+WARN: propagate errors upstream — don't swallow #-N returns
+TEST: ✓
+
 ## Code
 
 ```mushcode

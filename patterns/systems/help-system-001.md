@@ -13,6 +13,13 @@ tested: false
 
 A self-contained in-game help system. Topics stored as attributes on a `HelpSystem <sys>` object. Two hook attributes (`HOOK_FETCH`, `HOOK_SYNC`) provide clean extension points for connecting to an external database (HTTPS-accessible help via `execscript`).
 
+## Signal
+USE:  in-game +help with local-attr storage | hook stubs for external DB (execscript/HTTPS)
+ARCH: HOOK_FETCH(miss) | HOOK_SYNC(write) | FN_SAFE_TOPIC→FN_ATTR_NAME→HELP_* namespace
+WARN: @trigger bypasses use-lock→re-verify wizard via FN_WIZARD_CHECK(%0) inside triggers
+DETECT: FN_GET_HELP: local??HOOK_FETCH??empty (cache-miss → hook → not-found)
+TEST: ✗
+
 ## Key design decisions
 
 - **Use lock open to all**: `@lock/use obj=1` so public commands fire for non-wizards. Wizard-only access enforced per-trigger via `[hasflag(%#,wizard)]`, not at the use-lock level.

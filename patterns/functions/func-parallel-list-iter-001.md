@@ -13,6 +13,12 @@ tested: true
 
 Walk N space-delimited lists in lock-step using `iter(lnum(1,N),extract(list,##,1))` to produce multi-column output. This avoids `map()`, separate loop objects, or recursion when the lists are equal-length and the column count is fixed.
 
+## Signal
+USE:  walk N equal-length lists in lock-step | iter(lnum(1,N)) + extract(list,##,1)
+ALT:  lnum(1,words(list)) → dynamic length | stepped-index → 2-col from one list
+WARN: unequal-length lists→paired two-col variant | >30 items→risk iter recursion depth
+TEST: ✓
+
 ## Code
 
 ```mushcode

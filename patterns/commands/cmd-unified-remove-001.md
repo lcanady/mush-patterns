@@ -13,6 +13,12 @@ tested: true
 
 A single `$+cmd/*/remove *` command matches any category-qualified remove (e.g. `+stat/gift/remove`, `+stat/merit/remove`) and dispatches to the appropriate category-specific UDF via `case()`. One command attribute replaces N separate remove command patterns.
 
+## Signal
+USE:  N category removes → 1 $+cmd/*/remove * | dispatch via case(1,...) on lcstr(%0)
+ALT:  dynamic dispatch: ulocal(%!/F.CMD.REMOVE.[ucstr(%qc)]) for open-ended categories
+WARN: different arg signatures→don't unify | validate category with member() guard first
+TEST: ✓
+
 ## Code
 
 ```mushcode

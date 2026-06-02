@@ -33,6 +33,15 @@ date_added: "2026-03-27"
 
 Brief description of what this pattern does and when to use it.
 
+## Signal
+USE:  <when/why to use>
+ALT:  <alternatives>
+WARN: <caveats, when not to use>
+TEST: ✓/✗/–
+```
+
+The Signal block is AAAK compact notation — a fast-scan summary for AI agents loading this corpus.
+
 ## Code
 
 ```mushcode

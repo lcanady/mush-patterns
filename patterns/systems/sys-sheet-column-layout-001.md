@@ -7,11 +7,18 @@ complexity: medium
 tags: [sheet, display, column, ljust, dot-fill, format, charsheet, width]
 date_added: "2026-03-29"
 tested: true
+see_also: [cmd-printf-columns-001, func-printf-001]
 ---
 
 # Pattern: Fixed-width column slot with dot-fill for character sheet display
 
 Render one stat on a character sheet as a fixed-width slot: `StatName......5`. The label and value are padded apart with dots to fill the slot width, and the whole slot is `ljust()`-padded for clean column alignment. Composing multiple slots produces a multi-column sheet row with no explicit separator characters.
+
+## Signal
+USE:  stat column "StatName......5" | slot_width=26(3-col) or 39(2-col) for 78-char lines
+CALC: dots=slot_width-strlen(label)-strlen(val)-2 | max(1,...) ensures ≥1 dot | ljust pads to exact width
+WARN: ANSI codes bloat strlen→strip before measuring | line>output-width→wraps
+TEST: ✓
 
 ## Code
 
@@ -52,6 +59,14 @@ Render one stat on a character sheet as a fixed-width slot: `StatName......5`. T
 - **Specialty indicator**: append `*` to the value string when a specialty is set on the stat — works naturally because `strlen(%qv)` accounts for the extra character.
 - **Two-column layout**: use `slot_width=39` so two columns fill a 78-char line: `2*39=78`.
 - **No temp track**: for stats with no temp value (e.g. rank, backgrounds), pass the same value for both perm and temp — `F.SHEET.VAL` will display a plain number.
+
+## Alternatives
+
+**cmd-printf-columns-001** is the ANSI-safe version of this pattern. Use it when any cell may contain ansi() color codes.
+
+The core difference: ljust() and repeat() measure raw byte length -- ANSI escape sequences inflate the count, causing columns to mis-align when text contains color codes. printf() measures display width after stripping ANSI, so column alignment is always correct.
+
+Use this pattern (ljust + repeat) when your stat sheet is guaranteed plain text with no ansi() calls. Switch to cmd-printf-columns-001 as soon as any cell is colored.
 
 ## When NOT to use
 

@@ -12,6 +12,13 @@ date_added: "2026-03-28"
 
 Storing API keys, passwords, or tokens in a standard (non-underscore-prefixed) attribute exposes them to any player via `get()` or `examine`.
 
+## Signal
+TYPE: anti-pattern | fix
+RISK: non-_ attr→world-readable via get()/examine by any player
+FIX:  prefix all secrets with _ | _ATTR_NAME → wiz-only in RhostMUSH
+SCOPE: API keys | webhook secrets | internal tokens | admin passwords
+TEST: –
+
 ## Code
 
 ```mushcode

@@ -13,6 +13,13 @@ tested: true
 
 When a "rank" or "tier" stat is set by staff, automatically raise dependent stats (e.g., renown, experience, reputation) to their minimum values for that rank. Returns a human-readable change log so the setter sees exactly what was adjusted.
 
+## Signal
+USE:  auto-raise dependent stats when rank set | returns change-log string (empty if no changes)
+ARCH: TMPL.RANK.SLOT.<line> on DD → rank-key position | RANKMIN.<line>.<key>.<rank> → minimums
+MODES: any|total (warn only, no auto-raise) | specific-per-stat (auto-raise each to minimum)
+WARN: perm-only raises, temp preserved | only worth it with 5+ rank levels or multiple rank-key types
+TEST: ✓
+
 ## Code
 
 ```mushcode

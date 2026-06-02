@@ -13,6 +13,12 @@ tested: false
 
 Use a `$+cmd[/<switch>] <args>:` pattern to handle multiple sub-commands from a single command object. Dispatch via `switch()` or separate `$` patterns per switch.
 
+## Signal
+USE:  route +cmd/switch to separate attribute handlers
+PREFER: separate-patterns>single-switch (scale, per-attr @lock)
+RULE: @switch/first not @switch | always add fallback case | %0..%1 from $ wildcards
+TEST: ✗
+
 ## Code — single dispatcher
 
 ```mushcode

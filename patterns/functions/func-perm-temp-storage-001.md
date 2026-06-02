@@ -13,6 +13,13 @@ tested: true
 
 Store both the permanent (max) and temporary (current) value of a pool or stat in one attribute using dot-separated notation: `perm.temp`. Use `extract()` with `.` as the delimiter to read either field.
 
+## Signal
+USE:  store perm+temp in one attr | format: perm.temp | read with extract(attr,N,1,.)
+INIT: default(attr,0.0) → always valid two-part string even if unset
+CAP:  setter enforces temp∈[0,perm] — not trusted from input
+WARN: never before()/after() — breaks on dotted values | single-value stats→store plain int
+TEST: ✓
+
 ## Code
 
 ```mushcode

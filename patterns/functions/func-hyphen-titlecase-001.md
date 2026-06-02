@@ -13,6 +13,12 @@ tested: true
 
 Convert a hyphen-separated identifier (e.g. `get-of-fenris`, `primal-urge`) to a display-ready title-case string (e.g. `Get-Of-Fenris`, `Primal-Urge`). Standard `capstr()` only capitalises the first word; this pattern capitalises every word across hyphens.
 
+## Signal
+USE:  title-case across hyphens | get-of-fenris→Get-Of-Fenris | capstr() only does first word
+ALGO: lcstr→edit(-,sp)→iter(capstr(##))→edit(sp,-)
+WARN: input with spaces→collapse with hyphens in output | accented chars→may not cap on all servers
+TEST: ✓
+
 ## Code
 
 ```mushcode

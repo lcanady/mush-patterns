@@ -13,6 +13,13 @@ tested: true
 
 Centralise all stat definitions on a dedicated "DD" object using a `STATDEF.<CATEGORY>.<STATNAME>` attribute namespace. UDFs on the DD object provide validated lookups; callers never access the attributes directly.
 
+## Signal
+USE:  centralise stat definitions | STATDEF.CATEGORY.STATNAME | value: min|max|default[|group]
+ACCESS: F.GETDEF(cat,stat) | F.LIST.STATS(cat) via ulocal — never direct get()
+LOCK: @lock/attribute=WIZARD | all writes via installer only | DD holds no $-patterns
+WARN: <10 stats→overhead not worth it | player-definable stats→don't use fixed namespace
+TEST: ✓
+
 ## Code
 
 ```mushcode
