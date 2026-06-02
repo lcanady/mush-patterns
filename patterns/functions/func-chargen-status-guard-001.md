@@ -13,6 +13,12 @@ tested: true
 
 A simple UDF that returns 1 if a player is allowed to edit their own sheet — either because they are in chargen (status = unapproved) or because the caller is staff (WIZARD flag). Use at the top of every chargen-phase setter UDF.
 
+## Signal
+USE:  gate any chargen setter UDF | hasflag(WIZARD) OR lcstr(status)=unapproved
+CALL: ulocal(%!/F.CANWRITE,%0)→0??return-error | ulocal not u (no qreg bleed)
+WARN: read-only cmds→skip guard | admin-only cmds→check flag directly, skip status
+TEST: ✓
+
 ## Code
 
 ```mushcode

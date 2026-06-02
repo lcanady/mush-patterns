@@ -13,6 +13,12 @@ tested: true
 
 Use RhostMUSH's `@tag/add` command immediately after `@create` to register every system object under a stable tag name. Code on other objects can then reference `#tag_name` instead of hardcoded dbrefs.
 
+## Signal
+USE:  stable cross-object refs via #tag_name | @tag/add name=[lastcreate(me,t)] immediately after @create
+RULE: tag names→project-prefix (cor_sys, cor_dd) to avoid collisions | tags survive renames/moves
+WARN: single-object codebase→no benefit | servers without @tag→check @config/list first
+TEST: ✓
+
 ## Code
 
 ```mushcode

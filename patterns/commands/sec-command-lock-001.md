@@ -12,6 +12,13 @@ date_added: "2026-03-28"
 
 A `$+cmd:` pattern with no `@lock/use` can be triggered by any object on the MUSH — puppets, robots, zone objects, or players using `@force`. This bypasses any implied "this is a player command" assumption.
 
+## Signal
+TYPE: anti-pattern | fix
+RISK: unlocked $-pattern→any object can trigger via @force/@trigger
+FIX:  inline-guard>@lock/use (survives misconfiguration)
+GUARD: not(hasflag(%#,connected))??pemit-error | always before side-effects
+TEST: –
+
 ## Code
 
 ```mushcode

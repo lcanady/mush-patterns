@@ -12,6 +12,13 @@ date_added: "2026-03-28"
 
 Building a JSON body by string concatenation without validation creates an injection path. Even "safe" values like `num(%#)` can produce unexpected output and the pattern is one refactor away from a critical injection bug.
 
+## Signal
+TYPE: anti-pattern | fix
+RISK: num(%#)→#-1 for non-players | user-string→JSON injection on future edits
+FIX:  isnum(num(%#))??abort | strip ["\] from user input before JSON embed
+RULE: JSON body→server-controlled values only (dbrefs, timestamps, trusted attrs)
+TEST: –
+
 ## Code
 
 ```mushcode

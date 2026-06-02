@@ -13,6 +13,12 @@ tested: false
 
 Vetted from /tmp/test-hooks.mush
 
+## Signal
+USE:  mush-loader installer lifecycle hooks | #!pre-install…#!end-pre-install | #!post-install…#!end-post-install
+ARCH: pre-install runs before @create blocks | post-install runs after all attrs set
+WARN: minimal pattern — only shows hook syntax, no real logic | tested:false until testkit snippet added
+TEST: ✗
+
 ## Code
 
 ```mushcode

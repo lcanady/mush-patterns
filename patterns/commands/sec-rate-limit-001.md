@@ -12,6 +12,12 @@ date_added: "2026-03-28"
 
 Commands that trigger external resources (HTTP calls, DB writes, mail sends) must have a per-player cooldown to prevent denial-of-service via spam.
 
+## Signal
+USE:  per-player cooldown on expensive ops (HTTP, DB writes, mail)
+IMPL: _COOLDOWN→secs() | cand() short-circuits on missing attr (first use free) | store-before-sideeffect
+GLOBAL: store on cmd-object not player for server-wide limit
+TEST: –
+
 ## Code
 
 ```mushcode

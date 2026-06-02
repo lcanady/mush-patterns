@@ -13,6 +13,13 @@ tested: true
 
 Read a game-line key from a player's stored template attribute and dynamically dispatch to a game-line-specific UDF by constructing its name at runtime (`F.HANDLER.<LINE>`). This lets a single codebase support multiple game lines (WtA, VtM, MtA, etc.) with zero branching in shared code.
 
+## Signal
+USE:  multi-gameline single codebase | dynamic dispatch to F.HANDLER.<LINE> by template prefix
+ARCH: template=line/part1/part2 | extract(attr,1,1,/)→line-key | ulocal(%!/F.H.[ucstr(key)])
+ALT:  safe-fallback: hasattr check before dispatch | GAMELINES attr for validated line list
+WARN: one gameline only→overkill | handlers share most code→prefer case(1,...) instead
+TEST: ✓
+
 ## Code
 
 ```mushcode

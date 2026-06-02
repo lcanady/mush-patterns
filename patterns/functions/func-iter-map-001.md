@@ -13,6 +13,13 @@ tested: true
 
 Use `iter()` to transform every element in a space-delimited list. The loop variable `##` holds the current element; `#@` holds its 1-based index.
 
+## Signal
+USE:  transform space-delimited list | ##=element #@=1-based-index
+ALT:  list()(rhost) | lmap()(penn) → more control
+WARN: side-effects→use think/@dolist | empty-list→""
+SVR:  rhost(iter) | penn(lmap) | mux(iter)
+TEST: ✓
+
 ## Code
 
 ```mushcode
