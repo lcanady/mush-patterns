@@ -1,0 +1,196 @@
+/*
+################################################################################
+## GMCCG → RHOST MIGRATION: 1c - Data Tags
+## Source:  https://github.com/thenomain/GMCCG (TinyMUX)
+## Target:  RhostMUSH
+## Migrated: 2026-03-27
+## Changes:  NONE — fully compatible with RhostMUSH as-is.
+##
+## Install after: 1b
+################################################################################
+*/
+
+// == CORE ATTRIBUTES ==========================================================
+
+&tags.attribute.intelligence [v( d.dt )]=mental.power
+&tags.attribute.wits [v( d.dt )]=mental.finesse
+&tags.attribute.resolve [v( d.dt )]=mental.resistance
+&tags.attribute.strength [v( d.dt )]=physical.power
+&tags.attribute.dexterity [v( d.dt )]=physical.finesse
+&tags.attribute.stamina [v( d.dt )]=physical.resistance
+&tags.attribute.presence [v( d.dt )]=social.power
+&tags.attribute.manipulation [v( d.dt )]=social.finesse
+&tags.attribute.composure [v( d.dt )]=social.resistance
+
+
+// == CORE SKILLS ==============================================================
+
+&tags.skill.academics [v( d.dt )]=mental
+&tags.skill.computer [v( d.dt )]=mental
+&tags.skill.crafts [v( d.dt )]=mental
+&tags.skill.investigation [v( d.dt )]=mental
+&tags.skill.medicine [v( d.dt )]=mental
+&tags.skill.occult [v( d.dt )]=mental
+&tags.skill.politics [v( d.dt )]=mental
+&tags.skill.science [v( d.dt )]=mental
+
+&tags.skill.athletics [v( d.dt )]=physical
+&tags.skill.brawl [v( d.dt )]=physical
+&tags.skill.drive [v( d.dt )]=physical
+&tags.skill.firearms [v( d.dt )]=physical
+&tags.skill.larceny [v( d.dt )]=physical
+&tags.skill.stealth [v( d.dt )]=physical
+&tags.skill.survival [v( d.dt )]=physical
+&tags.skill.weaponry [v( d.dt )]=physical
+
+&tags.skill.animal_ken [v( d.dt )]=social
+&tags.skill.empathy [v( d.dt )]=social
+&tags.skill.expression [v( d.dt )]=social
+&tags.skill.intimidation [v( d.dt )]=social
+&tags.skill.persuasion [v( d.dt )]=social
+&tags.skill.socialize [v( d.dt )]=social
+&tags.skill.streetwise [v( d.dt )]=social
+&tags.skill.subterfuge [v( d.dt )]=social
+
+
+// == CORE MERITS ==============================================================
+
+&tags.merit.sanctity_of_merits [v( d.dt )]=special
+
+// -- Mental -------------------------------------------------------------------
+
+&tags.merit.area_of_expertise_() [v( d.dt )]=mental
+&tags.merit.common_sense [v( d.dt )]=mental
+&tags.merit.danger_sense [v( d.dt )]=mental.fighting
+&tags.merit.direction_sense [v( d.dt )]=mental
+&tags.merit.eidetic_memory [v( d.dt )]=mental
+&tags.merit.encyclopedic_knowledge_() [v( d.dt )]=mental
+&tags.merit.eye_for_the_strange [v( d.dt )]=mental
+&tags.merit.fast_reflexes [v( d.dt )]=mental.fighting
+&tags.merit.good_time_management [v( d.dt )]=mental
+&tags.merit.holistic_awareness [v( d.dt )]=mental
+&tags.merit.indomitable [v( d.dt )]=mental
+&tags.merit.interdisciplinary_specialty_() [v( d.dt )]=mental
+&tags.merit.investigative_aide_() [v( d.dt )]=mental
+&tags.merit.investigative_prodigy [v( d.dt )]=mental
+&tags.merit.language_() [v( d.dt )]=mental
+&tags.merit.library_() [v( d.dt )]=mental
+&tags.merit.meditative_mind [v( d.dt )]=mental
+&tags.merit.multilingual_() [v( d.dt )]=mental
+&tags.merit.patient [v( d.dt )]=mental
+&tags.merit.professional_training_() [v( d.dt )]=mental
+&tags.merit.tolerance_for_biology [v( d.dt )]=mental
+&tags.merit.virtuous_() [v( d.dt )]=mental
+&tags.merit.vice-ridden_() [v( d.dt )]=mental
+
+// -- Physical -----------------------------------------------------------------
+
+&tags.merit.ambidextrous [v( d.dt )]=chargen-only.physical
+&tags.merit.automotive_genius [v( d.dt )]=physical
+&tags.merit.crack_driver [v( d.dt )]=physical
+&tags.merit.demolisher [v( d.dt )]=physical
+&tags.merit.double_jointed [v( d.dt )]=physical
+&tags.merit.fleet_of_foot [v( d.dt )]=physical
+&tags.merit.giant [v( d.dt )]=chargen-only.physical
+&tags.merit.greyhound [v( d.dt )]=physical
+&tags.merit.hardy [v( d.dt )]=physical
+&tags.merit.iron_stamina [v( d.dt )]=physical
+&tags.merit.parkour [v( d.dt )]=physical.style
+&tags.merit.quick_draw_() [v( d.dt )]=physical
+&tags.merit.relentless [v( d.dt )]=physical
+&tags.merit.seizing_the_edge [v( d.dt )]=physical
+&tags.merit.sleight_of_hand [v( d.dt )]=physical
+&tags.merit.small_framed [v( d.dt )]=chargen-only.physical
+&tags.merit.stunt_driver [v( d.dt )]=physical.style
+
+// -- Social -------------------------------------------------------------------
+
+&tags.merit.allies_() [v( d.dt )]=social
+&tags.merit.alternate_identity_() [v( d.dt )]=social
+&tags.merit.anonymity [v( d.dt )]=social
+&tags.merit.barfly [v( d.dt )]=social
+&tags.merit.closed_book [v( d.dt )]=social
+&tags.merit.contacts_() [v( d.dt )]=social
+&tags.merit.etiquette [v( d.dt )]=social
+&tags.merit.fame [v( d.dt )]=social
+&tags.merit.fast_talking [v( d.dt )]=social
+&tags.merit.fixer [v( d.dt )]=social
+&tags.merit.hobbyist_clique_() [v( d.dt )]=social
+&tags.merit.inspiring [v( d.dt )]=social
+&tags.merit.iron_will [v( d.dt )]=social
+&tags.merit.mentor_() [v( d.dt )]=social
+&tags.merit.mystery_cult_initiation_() [v( d.dt )]=social
+&tags.merit.pusher [v( d.dt )]=social
+&tags.merit.resources [v( d.dt )]=social
+&tags.merit.retainer_() [v( d.dt )]=social
+&tags.merit.safe_place_() [v( d.dt )]=social.location
+&tags.merit.small_unit_tactics [v( d.dt )]=social
+&tags.merit.spin_doctor [v( d.dt )]=social
+&tags.merit.staff_() [v( d.dt )]=social
+&tags.merit.status_() [v( d.dt )]=social
+&tags.merit.striking_looks_() [v( d.dt )]=social
+&tags.merit.sympathetic [v( d.dt )]=social
+&tags.merit.table_turner [v( d.dt )]=social
+&tags.merit.takes_one_to_know_one [v( d.dt )]=social
+&tags.merit.taste [v( d.dt )]=social
+&tags.merit.true_friend_() [v( d.dt )]=social
+&tags.merit.untouchable [v( d.dt )]=social
+
+// -- Fighting -----------------------------------------------------------------
+
+&tags.merit.armed_defense [v( d.dt )]=physical.fighting.style
+&tags.merit.cheap_shot [v( d.dt )]=physical.fighting
+&tags.merit.choke_hold [v( d.dt )]=physical.fighting
+&tags.merit.close_quarters_combat [v( d.dt )]=physical.fighting.style
+&tags.merit.defensive_combat_() [v( d.dt )]=physical.fighting
+&tags.merit.fighting_finesse_() [v( d.dt )]=physical.fighting
+&tags.merit.firefight [v( d.dt )]=physical.fighting.style
+&tags.merit.grappling [v( d.dt )]=physical.fighting.style
+&tags.merit.heavy_weapons [v( d.dt )]=physical.fighting.style
+&tags.merit.improvised_weaponry [v( d.dt )]=physical.fighting.style
+&tags.merit.iron_skin [v( d.dt )]=physical.fighting
+&tags.merit.light_weapons [v( d.dt )]=physical.fighting.style
+&tags.merit.marksmanship [v( d.dt )]=physical.fighting.style
+&tags.merit.martial_arts [v( d.dt )]=physical.fighting.style
+&tags.merit.police_tactics [v( d.dt )]=physical.fighting.style
+&tags.merit.shiv [v( d.dt )]=physical.fighting
+&tags.merit.street_fighting [v( d.dt )]=physical.fighting.style
+&tags.merit.unarmed_defense [v( d.dt )]=physical.fighting.style
+
+// -- Supernatural -------------------------------------------------------------
+
+&tags.merit.aura_reading [v( d.dt )]=human.supernatural.mental
+&tags.merit.automatic_writing [v( d.dt )]=human.supernatural
+&tags.merit.biokinesis [v( d.dt )]=human.supernatural.physical
+&tags.merit.clairvoyance [v( d.dt )]=human.supernatural.mental
+&tags.merit.cursed [v( d.dt )]=human.supernatural.mental
+&tags.merit.laying_on_hands [v( d.dt )]=human.supernatural
+&tags.merit.medium [v( d.dt )]=human.supernatural.mental
+&tags.merit.mind_of_a_madman [v( d.dt )]=human.supernatural.mental
+&tags.merit.numbing_touch [v( d.dt )]=human.supernatural
+&tags.merit.omen_sensitivity [v( d.dt )]=human.supernatural.mental
+&tags.merit.psychokinesis_() [v( d.dt )]=human.supernatural.mental
+&tags.merit.psychometry [v( d.dt )]=human.supernatural.mental
+&tags.merit.telekinesis [v( d.dt )]=human.supernatural.mental
+&tags.merit.telepathy [v( d.dt )]=human.supernatural.mental
+&tags.merit.thief_of_fate [v( d.dt )]=human.supernatural.social
+&tags.merit.unseen_sense_() [v( d.dt )]=human.supernatural.mental
+
+
+// == CORE ADVANTAGES ==========================================================
+
+&tags.advantage.integrity [v( d.dt )]=integrity.human
+&tags.advantage.willpower [v( d.dt )]=derived.pool
+&tags.advantage.willpower_maximum [v( d.dt )]=derived.pool
+&tags.advantage.defense [v( d.dt )]=derived
+&tags.advantage.weaponry_defense [v( d.dt )]=derived
+&tags.advantage.brawl_defense [v( d.dt )]=derived
+&tags.advantage.size [v( d.dt )]=derived
+&tags.advantage.speed [v( d.dt )]=derived
+&tags.advantage.initiative [v( d.dt )]=derived
+&tags.advantage.perception [v( d.dt )]=derived
+
+
+// == BIO ======================================================================
+
+&tags.bio.sphere [v( d.dt )]=derived
